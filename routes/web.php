@@ -11,10 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/tasks', 'TaskController@index')->name('tasks');
+Route::get('/tasks/{task}', 'TaskController@show')->name('task');
+Route::get('/tasks/create', 'TaskController@create')->name('create-task');
+Route::post('/tasks', 'TaskController@store');
