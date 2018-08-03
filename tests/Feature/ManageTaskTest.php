@@ -49,9 +49,12 @@ class TaskTest extends TestCase
 
         $completed = 1;
 
-        $this->patch("/tasks/{$task->id}/status", ['status' => $completed]);
+        $this->patch($task->path() . "/status", ['status' => $completed]);
 
-        $this->assertDatabaseHas('tasks', ['id' => $task->id, 'status' => $completed]);
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'status' => $completed
+        ]);
     }
 
     public function createTask($overrides = [])
