@@ -17,3 +17,5 @@ Route::get('/tasks', 'TaskController@index')->name('tasks');
 Route::get('/tasks/{task}', 'TaskController@show')->name('task');
 Route::get('/tasks/create', 'TaskController@create')->name('create-task');
 Route::post('/tasks', 'TaskController@store');
+Route::patch('/tasks/{task}', 'TaskController@update');
+Route::patch('/tasks/{task}/status', 'TaskStatusController@update');

@@ -74,13 +74,15 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Task $task)
+    public function update(Task $task)
     {
-        //
+        dd(request('status'));
+        $task->update(request('body'));
+
+        return back();
     }
 
     /**

@@ -41,4 +41,25 @@ class TaskTest extends TestCase
         $this->get($response->headers->get('Location'))
             ->assertSee($task->name);
     }
+
+    public function test_a_task_may_be_marked_as_complete()
+    {
+        $this->signIn();
+        $task = create(Task::class);
+
+        $completed = 1;
+
+        $this->patch("/tasks/{$task->id}/status", ['status' => $completed]);
+
+        $this->assertDatabaseHas('tasks', ['id' => $task->id, 'status' => $completed]);
+    }
+
+    public function createTask($overrides = [])
+    {
+        $this->withExceptionHandling()->signIn();
+
+        $task = make(Task::class, ['attributes' => $overrides]);
+
+        return $this->post(route('tasks'), $task->toArray());
+    }
 }
