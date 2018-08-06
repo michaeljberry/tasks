@@ -42,6 +42,15 @@ class TaskTest extends TestCase
             ->assertSee($task->name);
     }
 
+    public function test_an_authorized_user_can_view_tasks()
+    {
+        $this->signIn();
+        $this->task = create(Task::class);
+
+        $this->get(route('tasks'))
+            ->assertSee($this->task->name);
+    }
+
     public function test_a_task_may_be_marked_as_complete()
     {
         $this->signIn();
@@ -54,6 +63,30 @@ class TaskTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
             'status' => $completed
+        ]);
+    }
+
+    public function test_a_completed_task_may_be_marked_as_incomplete()
+    {
+        $this->signIn();
+        $task = create(Task::class);
+
+        $complete = 1;
+
+        $this->patch($task->path() . "/status", ['status' => $complete]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'status' => $complete
+        ]);
+
+        $incomplete = 0;
+
+        $this->patch($task->path() . "/status", ['status' => $incomplete]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'status' => $incomplete
         ]);
     }
 
