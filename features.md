@@ -1,7 +1,7 @@
 ## Tests
 1. *test_an_authorized_user_can_create_tasks
 2. *test_guests_may_not_view_tasks
-3. test_task_can_be_marked_as_complete
+3. *test_task_can_be_marked_as_complete
 4. test_a_completed_task_can_be_marked_as_not_complete
 5. test_task_may_be_assigned_to_a_person
 6. test_task_may_have_a_due_date
