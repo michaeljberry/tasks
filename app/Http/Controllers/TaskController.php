@@ -81,10 +81,6 @@ class TaskController extends Controller
      */
     public function update(Task $task)
     {
-        dd(request('status'));
-        $task->update(request('body'));
-
-        return back();
     }
 
     /**

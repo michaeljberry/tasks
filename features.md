@@ -3,7 +3,7 @@
 2. *test_guests_may_not_view_tasks
 3. *test_task_can_be_marked_as_complete
 4. *test_a_completed_task_can_be_marked_as_not_complete
-5. test_task_may_be_assigned_to_a_person
+5. *test_task_may_be_assigned_to_a_person
 6. test_task_may_have_a_due_date
 7. test_created_task_appears_on_tasks_page
 8. test_tasks_list_may_be_sorted_by_due_date

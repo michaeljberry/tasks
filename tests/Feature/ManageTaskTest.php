@@ -33,7 +33,7 @@ class TaskTest extends TestCase
 
     public function test_an_authorized_user_can_create_tasks()
     {
-        $this->signIn();
+        $this->withExceptionHandling()->signIn();
         $task = make(Task::class);
 
         $response = $this->post(route('tasks'), $task->toArray());
@@ -67,6 +67,46 @@ class TaskTest extends TestCase
         $this->markTaskAsComplete($task);
 
         $this->markTaskAsIncomplete($task);
+    }
+
+    public function test_a_task_can_be_assigned_a_default_user()
+    {
+        $this->signIn();
+        $task = create(Task::class, [
+            'attributes' => [
+                'user_id' => auth()->id()
+            ]
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'user_id' => auth()->id()
+        ]);
+    }
+
+    public function test_a_tasks_user_can_be_changed()
+    {
+        $this->signIn();
+
+        $task = create(Task::class, [
+            'attributes' => [
+                'user_id' => auth()->id()
+            ]
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'user_id' => auth()->id()
+        ]);
+
+        $newUser = $this->signIn();
+
+        $this->patch($task->path() . "/user", ['user_id' => auth()->id()]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'user_id' => auth()->id()
+        ]);
     }
 
     public function createTask($overrides = [])
