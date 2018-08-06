@@ -56,14 +56,7 @@ class TaskTest extends TestCase
         $this->signIn();
         $task = create(Task::class);
 
-        $completed = 1;
-
-        $this->patch($task->path() . "/status", ['status' => $completed]);
-
-        $this->assertDatabaseHas('tasks', [
-            'id' => $task->id,
-            'status' => $completed
-        ]);
+        $this->markTaskAsComplete($task);
     }
 
     public function test_a_completed_task_may_be_marked_as_incomplete()
@@ -71,23 +64,9 @@ class TaskTest extends TestCase
         $this->signIn();
         $task = create(Task::class);
 
-        $complete = 1;
+        $this->markTaskAsComplete($task);
 
-        $this->patch($task->path() . "/status", ['status' => $complete]);
-
-        $this->assertDatabaseHas('tasks', [
-            'id' => $task->id,
-            'status' => $complete
-        ]);
-
-        $incomplete = 0;
-
-        $this->patch($task->path() . "/status", ['status' => $incomplete]);
-
-        $this->assertDatabaseHas('tasks', [
-            'id' => $task->id,
-            'status' => $incomplete
-        ]);
+        $this->markTaskAsIncomplete($task);
     }
 
     public function createTask($overrides = [])
@@ -97,5 +76,29 @@ class TaskTest extends TestCase
         $task = make(Task::class, ['attributes' => $overrides]);
 
         return $this->post(route('tasks'), $task->toArray());
+    }
+
+    public function markTaskAsComplete(Task $task)
+    {
+        $complete = 1;
+
+        $this->patch($task->path() . "/status", ['status' => $complete]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'status' => $complete
+        ]);
+    }
+
+    public function markTaskAsIncomplete(Task $task)
+    {
+        $incomplete = 0;
+
+        $this->patch($task->path() . "/status", ['status' => $incomplete]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'status' => $incomplete
+        ]);
     }
 }
