@@ -52,6 +52,12 @@ class TaskTest extends TestCase
             ->assertSee($task->name);
     }
 
+    public function test_a_task_requires_a_name()
+    {
+        $this->createTask(['name' => null])
+            ->assertSessionHasErrors('name');
+    }
+
     public function test_a_task_may_be_marked_as_complete()
     {
         $this->signIn();
