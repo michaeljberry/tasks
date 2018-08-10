@@ -132,6 +132,42 @@ class TaskTest extends TestCase
         ]);
     }
 
+    public function test_tasks_can_be_sorted_by_due_date_earliest_first()
+    {
+        $dueDateIsToday = Carbon::today();
+        $dueDateIsTomorrow = Carbon::tomorrow();
+
+        $response = $this->createTasksAndSort(
+            $dueDateIsToday,
+            $dueDateIsTomorrow,
+            'asc'
+        );
+
+        $this->assertEquals([
+            $dueDateIsToday->toDateTimeString(),
+            $dueDateIsTomorrow->toDateTimeString(),
+            null,
+        ], array_column($response, 'due_date'));
+    }
+
+    public function test_tasks_can_be_sorted_by_due_date_latest_first()
+    {
+        $dueDateIsToday = Carbon::today();
+        $dueDateIsTomorrow = Carbon::tomorrow();
+
+        $response = $this->createTasksAndSort(
+            $dueDateIsToday,
+            $dueDateIsTomorrow,
+            'desc'
+        );
+
+        $this->assertEquals([
+            $dueDateIsTomorrow->toDateTimeString(),
+            $dueDateIsToday->toDateTimeString(),
+            null,
+        ], array_column($response, 'due_date'));
+    }
+
     public function createTask($overrides = [])
     {
         $this->withExceptionHandling()->signIn();
@@ -163,5 +199,32 @@ class TaskTest extends TestCase
             'id' => $task->id,
             'status' => $incomplete
         ]);
+    }
+
+    protected function createTasksAndSort(
+        $firstTaskDueDate,
+        $secondTaskDueDate,
+        $direction
+    ){
+        $this->signIn();
+
+        // Task with today as due date
+        create(Task::class, [
+            'attributes' => [
+                'due_date' => $firstTaskDueDate
+            ]
+        ]);
+
+        // Task with tomorrow as due date
+        create(Task::class, [
+            'attributes' => [
+                'due_date' => $secondTaskDueDate
+            ]
+        ]);
+
+        // Task with no due date
+        create(Task::class);
+
+        return $this->getJson("tasks?duedate=$direction")->json();
     }
 }

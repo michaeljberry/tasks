@@ -14,4 +14,9 @@ class Task extends Model
             'task' => $this->id
         ]);
     }
+
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->apply($query);
+    }
 }

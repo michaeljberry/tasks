@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Task;
+use App\Filters\TaskFilters;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -16,9 +17,13 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(TaskFilters $filters)
     {
-        $tasks = Task::latest()->get();
+        $tasks = $this->getTasks($filters);
+
+        if (request()->wantsJson()) {
+            return $tasks;
+        }
 
         return view('tasks.index', compact('tasks'));
     }
@@ -95,5 +100,12 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         //
+    }
+
+    public function getTasks(TaskFilters $filters)
+    {
+        $tasks = Task::latest()->filter($filters);
+
+        return $tasks->get();
     }
 }
