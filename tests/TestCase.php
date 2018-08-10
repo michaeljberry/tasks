@@ -19,7 +19,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function signIn($user = null)
     {
-        $user = $user ? : create(User::class);
+        $user = $user ?: create(User::class);
         $this->actingAs($user);
         return $this;
     }
@@ -45,7 +45,10 @@ abstract class TestCase extends BaseTestCase
     }
     protected function withExceptionHandling()
     {
-        $this->app->instance(ExceptionHandler::class, $this->oldExceptionHandler);
+        $this->app->instance(
+            ExceptionHandler::class,
+            $this->oldExceptionHandler
+        );
         return $this;
     }
 }
