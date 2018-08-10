@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Task;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -45,10 +46,10 @@ class TaskTest extends TestCase
     public function test_an_authorized_user_can_view_tasks()
     {
         $this->signIn();
-        $this->task = create(Task::class);
+        $task = create(Task::class);
 
         $this->get(route('tasks'))
-            ->assertSee($this->task->name);
+            ->assertSee($task->name);
     }
 
     public function test_a_task_may_be_marked_as_complete()
@@ -106,6 +107,22 @@ class TaskTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id,
             'user_id' => auth()->id()
+        ]);
+    }
+
+    public function test_a_task_may_have_a_due_date()
+    {
+        $this->signIn();
+        $dueDate = Carbon::tomorrow();
+        $task = create(Task::class, [
+            'attributes' => [
+                'due_date' => $dueDate
+            ]
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $task->id,
+            'due_date' => $dueDate
         ]);
     }
 
