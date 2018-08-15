@@ -116,6 +116,58 @@ class TaskTest extends TestCase
         ]);
     }
 
+    public function test_tasks_can_be_sorted_by_user()
+    {
+        $this->signIn();
+
+        $firstTask = create(Task::class, [
+            'attributes' => [
+                'user_id' => auth()->id()
+            ]
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $firstTask->id,
+            'user_id' => auth()->id()
+        ]);
+
+        $newUser = $this->signIn();
+
+        $secondTask = create(Task::class, [
+            'attributes' => [
+                'user_id' => auth()->id()
+            ]
+        ]);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $secondTask->id,
+            'user_id' => auth()->id()
+        ]);
+
+        $thirdTask = create(Task::class);
+
+        $this->assertDatabaseHas('tasks', [
+            'id' => $thirdTask->id
+        ]);
+
+        $response = $this->getJson("tasks?users=desc")->json();
+
+        $this->assertEquals([
+            $thirdTask->id,
+            $secondTask->id,
+            $firstTask->id
+        ], array_column($response, 'user_id'));
+
+        $response = $this->getJson("tasks?users=asc")->json();
+
+        $this->assertEquals([
+            $firstTask->id,
+            $secondTask->id,
+            $thirdTask->id
+        ], array_column($response, 'user_id'));
+
+    }
+
     public function test_a_task_may_have_a_due_date()
     {
         $this->signIn();
